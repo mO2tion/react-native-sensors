@@ -21,7 +21,7 @@ public class Accelerometer extends ReactContextBaseJavaModule implements SensorE
   private final ReactApplicationContext reactContext;
   private final SensorManager sensorManager;
   private final Sensor sensor;
-  private double lastReading = (double) System.currentTimeMillis();
+  private double lastReading = 0.0;
   private int interval;
   private Arguments arguments;
 
@@ -75,7 +75,7 @@ public class Accelerometer extends ReactContextBaseJavaModule implements SensorE
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-      double tempMs = (double) System.currentTimeMillis();
+      double tempMs = (double) (sensorEvent.timestamp / 1000000);
       if (tempMs - lastReading >= interval){
         lastReading = tempMs;
 
