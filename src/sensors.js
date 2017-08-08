@@ -27,9 +27,17 @@ function createSensorMonitorCreator(sensorType) {
     } = (options || {});
     let observer;
 
-
-    // Start the sensor manager
-    RNSensors.start(sensorType, updateInterval, options["errorHandler"]);
+    /*
+     Only start the sensor once we subscribe to the observable.
+     Inspired by https://stackoverflow.com/questions/41883339/observable-onsubscribe-equivalent-in-rxjs
+     */
+    Rx.Observable.prototype.doOnSubscribe = function(onSubscribe) {
+      let source = this; 
+      return Rx.Observable.defer(() => {
+        onSubscribe();
+        return source;
+      })
+    };
 
     // Instanciate observable
     const observable = Rx.Observable.create(function (obs) {
@@ -37,7 +45,10 @@ function createSensorMonitorCreator(sensorType) {
       DeviceEventEmitter.addListener(sensorType, function(data) {
         observer.next(data);
       });
-    })
+    }).doOnSubscribe(()=>{
+      // Start the sensor manager
+      RNSensors.start(sensorType, updateInterval, options["errorHandler"]);
+    });
 
     // Stop the sensor manager
     observable.stop = () => {
