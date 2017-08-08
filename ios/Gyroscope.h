@@ -10,7 +10,7 @@
 - (void) setUpdateInterval:(double) interval;
 - (void) getUpdateInterval:(RCTResponseSenderBlock) cb;
 - (void) getData:(RCTResponseSenderBlock) cb;
-- (void) startUpdates;
+- (void) startUpdates:(RCTResponseSenderBlock) errorCallback;
 - (void) stopUpdates;
 
 @end

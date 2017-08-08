@@ -8,10 +8,10 @@ const handle = {
 };
 
 const RNSensors = {
-  start: function (type, updateInterval) {
+  start: function (type, updateInterval, errorCallback = null) {
     const api = handle[type];
     api.setUpdateInterval(updateInterval);
-    api.startUpdates();
+    api.startUpdates(errorCallback);
   },
 
   stop: function (type) {
@@ -26,8 +26,10 @@ function createSensorMonitorCreator(sensorType) {
       updateInterval = 100, // time in ms
     } = (options || {});
     let observer;
+
+
     // Start the sensor manager
-    RNSensors.start(sensorType, updateInterval);
+    RNSensors.start(sensorType, updateInterval, options["errorHandler"]);
 
     // Instanciate observable
     const observable = Rx.Observable.create(function (obs) {

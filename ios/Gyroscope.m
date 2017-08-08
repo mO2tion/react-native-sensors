@@ -19,6 +19,7 @@ RCT_EXPORT_MODULE();
         if([self->_motionManager isGyroAvailable])
         {
             NSLog(@"Gyroscope available");
+            self->isAvailable = true;
             /* Start the gyroscope if it is not active already */
             if([self->_motionManager isGyroActive] == NO)
             {
@@ -30,6 +31,7 @@ RCT_EXPORT_MODULE();
         else
         {
             NSLog(@"Gyroscope not Available!");
+            self->isAvailable = false;
         }
     }
     return self;
@@ -66,6 +68,10 @@ RCT_EXPORT_METHOD(getData:(RCTResponseSenderBlock) cb) {
 }
 
 RCT_EXPORT_METHOD(startUpdates) {
+    if (!self->isAvailable) {
+        errorCallback(@[@"Accelerometer is not available"])
+    }
+
     NSLog(@"startUpdates");
     [self->_motionManager startGyroUpdates];
 
