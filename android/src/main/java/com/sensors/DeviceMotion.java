@@ -22,7 +22,6 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
     private final SensorManager sensorManager;
     private double lastReading = 0.0;
     private int interval;
-    private Arguments arguments;
     private final float[] sampleBuffer;
 
     private static final int GYRX = 0;
@@ -112,7 +111,7 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
         if (tempMs - lastReading >= interval) {
             lastReading = tempMs;
 
-            final WritableMap map = arguments.createMap();
+            final WritableMap map = Arguments.createMap();
 
             map.putDouble("accx", sampleBuffer[ACCX]);
             map.putDouble("accy", sampleBuffer[ACCY]);
