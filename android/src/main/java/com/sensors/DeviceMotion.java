@@ -23,6 +23,7 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
     private double lastReading = 0.0;
     private int interval;
     private final float[] sampleBuffer;
+    private int lastSeenTimestamp;
 
     private static final int GYRX = 0;
     private static final int GYRY = 1;
@@ -95,6 +96,15 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         final double tempMs = (double) (sensorEvent.timestamp / 1000000);
+
+        /* Adjust timestamp, save last seen ts and adjust tempMs to be > last seen ts by a little bit.
+         * Only record positive values. Sometimes the clock skips back for odd
+         * reasons, just ignore it and keep going, the deltas are going to adjust.
+         */
+        if (tempMs<lastSeenTimestamp) {
+            tempMs = lastSeenTimestamp + 1;
+        }
+        lastSeenTimestamp = tempMs;
 
         final Sensor mySensor = sensorEvent.sensor;
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
