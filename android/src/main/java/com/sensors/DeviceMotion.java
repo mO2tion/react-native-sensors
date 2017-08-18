@@ -57,7 +57,8 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             }
             return;
         }
-
+        sensorManager.registerListener(this, accelerometer, this.interval * 1000);
+        
         final Sensor gyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (gyroscope == null) {
             // No sensor found, send error message or throw
@@ -66,11 +67,10 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             } else {
                 throw new RuntimeException("No Gyroscope found");
             }
-            return;
         }
-
-        sensorManager.registerListener(this, accelerometer, this.interval * 1000);
-        sensorManager.registerListener(this, gyroscope, this.interval * 1000);
+        else {
+            sensorManager.registerListener(this, gyroscope, this.interval * 1000);
+        }
     }
 
     @ReactMethod
