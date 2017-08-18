@@ -3,7 +3,7 @@
 #import <React/RCTBridgeModule.h>
 #import <CoreMotion/CoreMotion.h>
 
-@interface Gyroscope : NSObject<RCTBridgeModule> {
+@interface DeviceMotion : NSObject <RCTBridgeModule> {
     CMMotionManager *_motionManager;
 }
 
