@@ -56,7 +56,6 @@ RCT_EXPORT_METHOD(getData:(RCTResponseSenderBlock) cb) {
 
 RCT_EXPORT_METHOD(startUpdates:(RCTResponseSenderBlock) errorCallback) {
 
-    NSLog(@"startUpdates");
     [self->_motionManager startDeviceMotionUpdates];
 
     /* Receive the devicemotion data on this block */
@@ -70,7 +69,6 @@ RCT_EXPORT_METHOD(startUpdates:(RCTResponseSenderBlock) errorCallback) {
         double gyry = deviceMotion.rotationRate.y;
         double gyrz = deviceMotion.rotationRate.z;
         double timestamp = deviceMotion.timestamp;
-        NSLog(@"startUpdates: %f, %f, %f, %f, %f, %f, %f", accx, accy, accz, gyrx, gyry, gyrz, timestamp);
 
         [self.bridge.eventDispatcher sendDeviceEventWithName:@"DeviceMotion" body:@{
             @"accx" : [NSNumber numberWithDouble:accx],
