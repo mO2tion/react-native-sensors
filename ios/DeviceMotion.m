@@ -9,6 +9,8 @@
 @synthesize bridge = _bridge;
 RCT_EXPORT_MODULE();
 
+double gravitationalAcceleration = 9.82;
+
 - (id) init {
     self = [super init];
     NSLog(@"DeviceMotion");
@@ -32,9 +34,9 @@ RCT_EXPORT_METHOD(getUpdateInterval:(RCTResponseSenderBlock) cb) {
 }
 
 RCT_EXPORT_METHOD(getData:(RCTResponseSenderBlock) cb) {
-    double accx = self->_motionManager.deviceMotion.userAcceleration.x;
-    double accy = self->_motionManager.deviceMotion.userAcceleration.y;
-    double accz = self->_motionManager.deviceMotion.userAcceleration.z;
+    double accx = (self->_motionManager.deviceMotion.userAcceleration.x + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
+    double accy = (self->_motionManager.deviceMotion.userAcceleration.y + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
+    double accz = (self->_motionManager.deviceMotion.userAcceleration.z + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
     double gyrx = self->_motionManager.deviceMotion.rotationRate.x;
     double gyry = self->_motionManager.deviceMotion.rotationRate.y;
     double gyrz = self->_motionManager.deviceMotion.rotationRate.z;
@@ -62,9 +64,9 @@ RCT_EXPORT_METHOD(startUpdates:(RCTResponseSenderBlock) errorCallback) {
         [self->_motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue]
             withHandler:^(CMDeviceMotion *deviceMotion, NSError *error)
     {
-        double accx = deviceMotion.userAcceleration.x;
-        double accy = deviceMotion.userAcceleration.y;
-        double accz = deviceMotion.userAcceleration.z;
+        double accx = (deviceMotion.userAcceleration.x + deviceMotion.gravity.x) * gravitationalAcceleration;
+        double accy = (deviceMotion.userAcceleration.y + deviceMotion.gravity.y) * gravitationalAcceleration;
+        double accz = (deviceMotion.userAcceleration.z + deviceMotion.gravity.z) * gravitationalAcceleration;
         double gyrx = deviceMotion.rotationRate.x;
         double gyry = deviceMotion.rotationRate.y;
         double gyrz = deviceMotion.rotationRate.z;
