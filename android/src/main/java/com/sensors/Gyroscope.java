@@ -29,7 +29,7 @@ public class Gyroscope extends ReactContextBaseJavaModule implements SensorEvent
     super(reactContext);
     this.reactContext = reactContext;
     this.sensorManager = (SensorManager)reactContext.getSystemService(reactContext.SENSOR_SERVICE);
-    this.sensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);   
+    this.sensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
   }
 
   // RN Methods
@@ -52,7 +52,7 @@ public class Gyroscope extends ReactContextBaseJavaModule implements SensorEvent
     // Milisecond to Mikrosecond conversion
     sensorManager.registerListener(this, sensor, this.interval * 1000);
   }
-  
+
   @ReactMethod
   public void stopUpdates() {
     sensorManager.unregisterListener(this);
@@ -75,9 +75,9 @@ public class Gyroscope extends ReactContextBaseJavaModule implements SensorEvent
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-      double tempMs = (double) (sensorEvent.timestamp / 1000000);
-      if (tempMs - lastReading >= interval){
-        lastReading = tempMs;
+      double timestampInSeconds = (double) (sensorEvent.timestamp / 1e9);
+      if (timestampInSeconds - lastReading >= interval){
+        lastReading = timestampInSeconds;
 
         Sensor mySensor = sensorEvent.sensor;
         WritableMap map = arguments.createMap();
@@ -86,7 +86,7 @@ public class Gyroscope extends ReactContextBaseJavaModule implements SensorEvent
           map.putDouble("x", sensorEvent.values[0]);
           map.putDouble("y", sensorEvent.values[1]);
           map.putDouble("z", sensorEvent.values[2]);
-          map.putDouble("timestamp", tempMs);
+          map.putDouble("timestamp", timestampInSeconds);
           sendEvent("Gyroscope", map);
         }
       }

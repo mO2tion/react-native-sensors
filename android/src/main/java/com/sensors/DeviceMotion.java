@@ -58,7 +58,7 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             return;
         }
         sensorManager.registerListener(this, accelerometer, this.interval * 1000);
-        
+
         final Sensor gyroscope = this.sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (gyroscope == null) {
             // No sensor found, send error message or throw
@@ -95,18 +95,18 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        /* Adjust timestamp, save last seen ts and adjust tempMs to be > last seen ts by a little bit.
+        /* Adjust timestamp, save last seen ts and adjust timestampInSeconds to be > last seen ts by a little bit.
          * Only record positive values. Sometimes the clock skips back for odd
          * reasons, just ignore it and keep going, the deltas are going to adjust.
          */
-        final double tempMs;
+        final double timestampInSeconds;
         if (sensorEvent.timestamp>=lastSeenTimestamp) {
-            tempMs = (double) (sensorEvent.timestamp / 1000000);
+            timestampInSeconds = (double) (sensorEvent.timestamp / 1e9);
             lastSeenTimestamp = sensorEvent.timestamp;
         }
         else {
-            tempMs = (lastSeenTimestamp / 1000000) + 1;
-            lastSeenTimestamp = (long) (tempMs * 1000000);
+            timestampInSeconds = (lastSeenTimestamp / 1e9) + 1/1e3; // Add 1 milisecond
+            lastSeenTimestamp = (long) (timestampInSeconds * 1e9);
         }
 
         final Sensor mySensor = sensorEvent.sensor;
@@ -121,8 +121,8 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             sampleBuffer[GYRZ] = sensorEvent.values[2];
         }
 
-        if (tempMs - lastReading >= interval) {
-            lastReading = tempMs;
+        if (timestampInSeconds - lastReading >= interval) {
+            lastReading = timestampInSeconds;
 
             final WritableMap map = Arguments.createMap();
 
@@ -132,7 +132,7 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             map.putDouble("gyrx", sampleBuffer[GYRX]);
             map.putDouble("gyry", sampleBuffer[GYRY]);
             map.putDouble("gyrz", sampleBuffer[GYRZ]);
-            map.putDouble("timestamp", tempMs);
+            map.putDouble("timestamp", timestampInSeconds);
 
             sendEvent("DeviceMotion", map);
         }

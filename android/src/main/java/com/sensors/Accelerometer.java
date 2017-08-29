@@ -75,9 +75,9 @@ public class Accelerometer extends ReactContextBaseJavaModule implements SensorE
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-      double tempMs = (double) (sensorEvent.timestamp / 1000000);
-      if (tempMs - lastReading >= interval){
-        lastReading = tempMs;
+      double timestampInSeconds = (double) (sensorEvent.timestamp / 1e9);
+      if (timestampInSeconds - lastReading >= interval){
+        lastReading = timestampInSeconds;
 
         Sensor mySensor = sensorEvent.sensor;
         WritableMap map = arguments.createMap();
@@ -86,7 +86,7 @@ public class Accelerometer extends ReactContextBaseJavaModule implements SensorE
           map.putDouble("x", sensorEvent.values[0]);
           map.putDouble("y", sensorEvent.values[1]);
           map.putDouble("z", sensorEvent.values[2]);
-          map.putDouble("timestamp", tempMs);
+          map.putDouble("timestamp", timestampInSeconds);
           sendEvent("Accelerometer", map);
         }
       }
