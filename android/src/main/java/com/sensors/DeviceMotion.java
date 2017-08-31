@@ -99,14 +99,14 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
          * Only record positive values. Sometimes the clock skips back for odd
          * reasons, just ignore it and keep going, the deltas are going to adjust.
          */
-        final double timestampInSeconds;
-        if (sensorEvent.timestamp>=lastSeenTimestamp) {
-            timestampInSeconds = (double) (sensorEvent.timestamp / 1e9);
+        final long tempMs;
+        if (sensorEvent.timestamp >= lastSeenTimestamp) {
+            tempMs = sensorEvent.timestamp / 1_000_000;
             lastSeenTimestamp = sensorEvent.timestamp;
         }
         else {
-            timestampInSeconds = (lastSeenTimestamp / 1e9) + 1/1e3; // Add 1 milisecond
-            lastSeenTimestamp = (long) (timestampInSeconds * 1e9);
+            tempMs = (lastSeenTimestamp / 1_000_000) + 1; // Add 1 milisecond
+            lastSeenTimestamp = (long) (tempMs * 1_000_000);
         }
 
         final Sensor mySensor = sensorEvent.sensor;
@@ -121,8 +121,8 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             sampleBuffer[GYRZ] = sensorEvent.values[2];
         }
 
-        if (timestampInSeconds - lastReading >= interval) {
-            lastReading = timestampInSeconds;
+        if (tempMs - lastReading >= interval) {
+            lastReading = tempMs;
 
             final WritableMap map = Arguments.createMap();
 
@@ -132,7 +132,7 @@ public class DeviceMotion extends ReactContextBaseJavaModule implements SensorEv
             map.putDouble("gyrx", sampleBuffer[GYRX]);
             map.putDouble("gyry", sampleBuffer[GYRY]);
             map.putDouble("gyrz", sampleBuffer[GYRZ]);
-            map.putDouble("timestamp", timestampInSeconds);
+            map.putDouble("timestamp", ((double)tempMs) / 1_000.0); // Convert to iOS weird seconds representation :)
 
             sendEvent("DeviceMotion", map);
         }
