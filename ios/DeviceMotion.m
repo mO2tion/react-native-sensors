@@ -32,8 +32,8 @@ RCT_EXPORT_METHOD(getUpdateInterval:(RCTResponseSenderBlock) cb) {
 
 RCT_EXPORT_METHOD(getData:(RCTResponseSenderBlock) cb) {
     double accx = (self->_motionManager.deviceMotion.userAcceleration.x + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
-    double accy = (self->_motionManager.deviceMotion.userAcceleration.y + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
-    double accz = (self->_motionManager.deviceMotion.userAcceleration.z + self->_motionManager.deviceMotion.gravity.x) * gravitationalAcceleration;
+    double accy = (self->_motionManager.deviceMotion.userAcceleration.y + self->_motionManager.deviceMotion.gravity.y) * gravitationalAcceleration;
+    double accz = (self->_motionManager.deviceMotion.userAcceleration.z + self->_motionManager.deviceMotion.gravity.z) * gravitationalAcceleration;
     double gyrx = self->_motionManager.deviceMotion.rotationRate.x;
     double gyry = self->_motionManager.deviceMotion.rotationRate.y;
     double gyrz = self->_motionManager.deviceMotion.rotationRate.z;
