@@ -13,7 +13,6 @@ double gravitationalAcceleration = 9.82;
 
 - (id) init {
     self = [super init];
-    NSLog(@"DeviceMotion");
     if (self) {
         self->_motionManager = [[CMMotionManager alloc] init];
     }
@@ -21,7 +20,6 @@ double gravitationalAcceleration = 9.82;
 }
 
 RCT_EXPORT_METHOD(setUpdateInterval:(double) interval) {
-    NSLog(@"setDeviceMotionUpdateInterval: %f", interval);
     double intervalInSeconds = interval / 1000;
 
     [self->_motionManager setDeviceMotionUpdateInterval:intervalInSeconds];
@@ -29,7 +27,6 @@ RCT_EXPORT_METHOD(setUpdateInterval:(double) interval) {
 
 RCT_EXPORT_METHOD(getUpdateInterval:(RCTResponseSenderBlock) cb) {
     double interval = self->_motionManager.deviceMotionUpdateInterval;
-    NSLog(@"getUpdateInterval: %f", interval);
     cb(@[[NSNull null], [NSNumber numberWithDouble:interval]]);
 }
 
@@ -41,8 +38,6 @@ RCT_EXPORT_METHOD(getData:(RCTResponseSenderBlock) cb) {
     double gyry = self->_motionManager.deviceMotion.rotationRate.y;
     double gyrz = self->_motionManager.deviceMotion.rotationRate.z;
     double timestamp = self->_motionManager.deviceMotion.timestamp;
-
-    NSLog(@"getData: %f, %f, %f, %f, %f, %f, %f", accx, accy, accz, gyrx, gyry, gyrz, timestamp);
 
     cb(@[[NSNull null], @{
         @"accx" : [NSNumber numberWithDouble:accx],
@@ -86,7 +81,6 @@ RCT_EXPORT_METHOD(startUpdates:(RCTResponseSenderBlock) errorCallback) {
 }
 
 RCT_EXPORT_METHOD(stopUpdates) {
-    NSLog(@"stopUpdates");
     [self->_motionManager stopDeviceMotionUpdates];
 }
 
